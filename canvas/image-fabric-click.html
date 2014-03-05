@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TEST</title>
+    <meta charset=utf-8>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="http://code.createjs.com/easeljs-0.7.1.min.js"></script>
+    <script type="text/javascript">
+      var canvas = document.getElementById('canvas');
+      var stage = new createjs.Stage(canvas);
+
+      window.onresize = function() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      window.onresize();
+
+      var image = new createjs.Bitmap('test.jpg');
+
+      stage.addChild(image);
+
+      var handleTick = function() {
+        stage.update();
+      }
+
+      createjs.Ticker.setFPS(24);
+      createjs.Ticker.addEventListener("tick", handleTick);
+
+      $('canvas').on('click', function(e) {
+        // do stuff
+      });
+
+    </script>
+  </body>
+</html>

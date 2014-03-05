@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TEST</title>
+    <meta charset=utf-8>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas" width="500" height="500"></canvas>
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="http://code.createjs.com/easeljs-0.7.1.min.js"></script>
+    <script type="text/javascript">
+      var numberOfPoints = 60;
+      var pointsInRow = Math.floor(Math.sqrt(numberOfPoints));
+      var canvas = document.getElementById('canvas');
+      var stage = new createjs.Stage(canvas);
+
+      window.onresize = function() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      window.onresize();
+
+      var points = [];
+
+      // draw random points
+      for (var i = 0; i < numberOfPoints; i++) {
+        var x = Math.floor( Math.random() * canvas.width );
+        var y = Math.floor( Math.random() * canvas.height );
+        var point = new createjs.Point(x,y);
+        points.push(point);
+      };
+
+      // sort points array by y value
+      function compareY(a,b) {
+        if (a.y < b.y)
+           return -1;
+        if (a.y > b.y)
+          return 1;
+        return 0;
+      }
+      function compareX(a,b) {
+        if (a.x < b.x)
+           return -1;
+        if (a.x > b.x)
+          return 1;
+        return 0;
+      }
+      points.sort(compareY);
+
+      var chunks = [];
+
+      for (var i = 0; i < points.length; i+=pointsInRow) {
+        chunks.push( points.slice(i, i + pointsInRow));
+      };
+
+      for (var i = 0; i < chunks.length; i++) {
+        chunks[i].sort(compareX);
+      };
+
+      for (var i = 0; i < chunks.length; i++) {
+        var rowTop = new createjs.Shape();
+        rowTop.graphics.moveTo(chunks[i][0].x, chunks[i][0].y).beginStroke('#444');
+
+        for (var n = 0; n < chunks[n].length; n++) {
+          // chunks[i][n];
+          if (n > 0 && chunks[i][n]) {
+            rowTop.graphics.lineTo(chunks[i][n].x, chunks[i][n].y);
+
+            if (chunks[i+1] && chunks[i+1][n]) {
+              var line = new createjs.Shape();
+              line.graphics.moveTo(chunks[i][n].x, chunks[i][n].y).beginStroke('#444').lineTo(chunks[i+1][n].x, chunks[i+1][n].y);
+              stage.addChild(line);
+            }
+
+            if (chunks[i+1] && chunks[i+1][n-1]) {
+              var line2 = new createjs.Shape();
+              line2.graphics.moveTo(chunks[i][n-1].x, chunks[i][n-1].y).beginStroke('#444').lineTo(chunks[i+1][n-1].x, chunks[i+1][n-1].y);
+              stage.addChild(line2);
+            }
+          }
+
+        };
+
+        stage.addChild(rowTop);
+      };
+
+      stage.update();
+
+      // for (var i = 0; i < points.length; i++) {
+      //   for (var x = i; x < points.length; x++) {
+      //     var line = new createjs.Shape();
+      //     line.graphics.moveTo(points[x].x, points[x].y).beginStroke('#444');
+      //     line.graphics.lineTo(points[i].x, points[i].y);
+      //     stage.addChild(line);
+      //   }
+      // }
+
+    </script>
+  </body>
+</html>
