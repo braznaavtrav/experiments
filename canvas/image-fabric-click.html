@@ -27,6 +27,16 @@
       window.onresize();
 
       var image = new createjs.Bitmap('test.jpg');
+      var shapes = [];
+      image.on('click', function(e) {
+        var point = new createjs.Point(e.stageX, e.stageY);
+        var top = new createjs.Shape();
+        // cx = (x + x + x) / 3
+        // cy = (y + y + y) / 3
+        top.graphics.beginFill().moveTo(point.x, point.y).lineTo(image.getBounds().x, image.getBounds().y).lineTo(image.getBounds().width, image.getBounds().x).closePath();
+        stage.addChild(top);
+        console.log(top);
+      });
 
       stage.addChild(image);
 
@@ -36,10 +46,6 @@
 
       createjs.Ticker.setFPS(24);
       createjs.Ticker.addEventListener("tick", handleTick);
-
-      $('canvas').on('click', function(e) {
-        // do stuff
-      });
 
     </script>
   </body>
