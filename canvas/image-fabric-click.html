@@ -26,16 +26,36 @@
       }
       window.onresize();
 
+      var cloned_context = stage.canvas.getContext("2d");
+
+      function Triangle(image, x1, y1, x2, y2, x3, y3) {
+        stage.removeChildAt(0);
+        stage.addChild(image);
+        var triangle = new createjs.Shape();
+        var cx = (x1 + x2 + x3) / 3;
+        var cy = (y1 + y2 + y3) / 3;
+        var color = stage.canvas.getContext("2d").getImageData(cx, cy, 1, 1);
+        color = 'rgb(' + color.data[0] + ', ' + color.data[1] + ', ' + color.data[2] + ')';
+        triangle.graphics.beginFill(color).moveTo(x1, y1).lineTo(x2, y2).lineTo(x3, y3).closePath();
+        return triangle;
+      }
+
+      function drawAllShapes(shapes) {
+        for (var i = shapes.length - 1; i >= 0; i--) {
+          stage.addChild(shapes[i]);
+        }
+      }
+
       var image = new createjs.Bitmap('test.jpg');
       var shapes = [];
       image.on('click', function(e) {
         var point = new createjs.Point(e.stageX, e.stageY);
-        var top = new createjs.Shape();
-        // cx = (x + x + x) / 3
-        // cy = (y + y + y) / 3
-        top.graphics.beginFill().moveTo(point.x, point.y).lineTo(image.getBounds().x, image.getBounds().y).lineTo(image.getBounds().width, image.getBounds().x).closePath();
-        stage.addChild(top);
-        console.log(top);
+        var top = new Triangle(image.clone(), point.x, point.y, image.getBounds().x, image.getBounds().y, image.getBounds().width, image.getBounds().x);
+        var right = new Triangle(image.clone(), point.x, point.y, image.getBounds().width, image.getBounds().y, image.getBounds().width, image.getBounds().height);
+        var bottom = new Triangle(image.clone(), point.x, point.y, image.getBounds().x, image.getBounds().height, image.getBounds().width, image.getBounds().height);
+        var left = new Triangle(image.clone(), point.x, point.y, image.getBounds().x, image.getBounds().y, image.getBounds().x, image.getBounds().height);
+        shapes.push(top, right, bottom, left);
+        drawAllShapes(shapes);
       });
 
       stage.addChild(image);
