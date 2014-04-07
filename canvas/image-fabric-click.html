@@ -28,6 +28,8 @@
 
       var cloned_context = stage.canvas.getContext("2d");
 
+      var index = 1;
+
       function Triangle(image, x1, y1, x2, y2, x3, y3) {
         stage.addChild(image.clone());
         var triangle = new createjs.Shape();
@@ -35,7 +37,7 @@
         var cy = (y1 + y2 + y3) / 3;
         var color = stage.canvas.getContext("2d").getImageData(cx, cy, 1, 1);
         color = 'rgb(' + color.data[0] + ', ' + color.data[1] + ', ' + color.data[2] + ')';
-        triangle.graphics.beginFill(color).moveTo(x1, y1).lineTo(x2, y2).lineTo(x3, y3).closePath();
+        triangle.graphics.beginFill(color).beginStroke('#fff').moveTo(x1, y1).lineTo(x2, y2).lineTo(x3, y3).closePath();
         triangle.points = {
           x1: x1,
           y1: y1,
@@ -44,42 +46,32 @@
           x3: x3,
           y3: y3
         };
+        triangle.on('click', function(e) {
+          var self = this;
+          var t1 = new Triangle(image.clone(), e.stageX, e.stageY, self.points.x1, self.points.y1, self.points.x2, self.points.y2);
+          var t2 = new Triangle(image.clone(), e.stageX, e.stageY, self.points.x2, self.points.y2, self.points.x3, self.points.y3);
+          var t3 = new Triangle(image.clone(), e.stageX, e.stageY, self.points.x3, self.points.y3, self.points.x1, self.points.y1);
+          shapes.push(t1, t2, t3);
+          drawAllShapes(shapes);
+        });
         return triangle;
       }
 
       function drawAllShapes(shapes) {
-        for (var i = shapes.length - 1; i >= 0; i--) {
+        stage.removeAllChildren();
+        for (var i = 0, length = shapes.length; i < length; i++) {
           stage.addChild(shapes[i]);
-        }
-      }
-
-      function setClicks(shapes, image) {
-        for (var i = shapes.length - 1; i >= 0; i--) {
-          shapes[i].on('click', function(e) {
-            // e.currentTarget.points
-            // e.stageX
-            // e.stageY
-            var t1 = new Triangle(image.clone(), e.stageX, e.stageY, e.currentTarget.points.x1, e.currentTarget.points.y1, e.currentTarget.points.x2, e.currentTarget.points.y2);
-            var t2 = new Triangle(image.clone(), e.stageX, e.stageY, e.currentTarget.points.x1, e.currentTarget.points.y2, e.currentTarget.points.x2, e.currentTarget.points.y3);
-            var t3 = new Triangle(image.clone(), e.stageX, e.stageY, e.currentTarget.points.x1, e.currentTarget.points.y3, e.currentTarget.points.x2, e.currentTarget.points.y1);
-            shapes.push(t1, t2, t3);
-            stage.addChild(image.clone());
-            drawAllShapes(shapes, image.clone());
-            // console.log(shapes);
-          });
         }
       }
 
       var image = new createjs.Bitmap('test.jpg');
       var shapes = [];
       image.on('click', function(e) {
-        var point = new createjs.Point(e.stageX, e.stageY);
-        var top = new Triangle(image.clone(), point.x, point.y, image.getBounds().x, image.getBounds().y, image.getBounds().width, image.getBounds().x);
-        var right = new Triangle(image.clone(), point.x, point.y, image.getBounds().width, image.getBounds().y, image.getBounds().width, image.getBounds().height);
-        var bottom = new Triangle(image.clone(), point.x, point.y, image.getBounds().x, image.getBounds().height, image.getBounds().width, image.getBounds().height);
-        var left = new Triangle(image.clone(), point.x, point.y, image.getBounds().x, image.getBounds().y, image.getBounds().x, image.getBounds().height);
+        var top = new Triangle(image.clone(), e.stageX, e.stageY, image.getBounds().x, image.getBounds().y, image.getBounds().width, image.getBounds().x);
+        var right = new Triangle(image.clone(), e.stageX, e.stageY, image.getBounds().width, image.getBounds().y, image.getBounds().width, image.getBounds().height);
+        var bottom = new Triangle(image.clone(), e.stageX, e.stageY, image.getBounds().x, image.getBounds().height, image.getBounds().width, image.getBounds().height);
+        var left = new Triangle(image.clone(), e.stageX, e.stageY, image.getBounds().x, image.getBounds().y, image.getBounds().x, image.getBounds().height);
         shapes.push(top, right, bottom, left);
-        setClicks(shapes, image.clone());
         drawAllShapes(shapes);
       });
 

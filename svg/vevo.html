@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TEST</title>
+    <meta charset=utf-8>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <svg id="svg"></svg>
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="//cdn.jsdelivr.net/snap.svg/0.2.0/snap.svg-min.js"></script>
+    <script type="text/javascript">
+      var s = Snap('#svg'),
+          v = "M{x},{y}l18.213,78.812c3.71,14.224,14.282,13.314,14.282,13.314c7.241,0,12.66-4.201,17.589-12.155L{x2},{y}z";
+
+      var vevoStream = function (x, y) {
+        s.path(Snap.format(v, {
+          x: x,
+          y: y,
+          x2: x + 99.12
+        }));
+      };
+
+      $('svg').on('click', function(e) {
+        var x = e.clientX,
+            y = e.clientY;
+
+        vevoStream(x, y);
+
+        return false;
+      });
+
+    </script>
+  </body>
+</html>
