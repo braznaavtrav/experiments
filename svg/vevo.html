@@ -20,19 +20,64 @@
       var s = Snap('#svg'),
           v = "M{x},{y}l18.213,78.812c3.71,14.224,14.282,13.314,14.282,13.314c7.241,0,12.66-4.201,17.589-12.155L{x2},{y}z";
 
-      var vevoStream = function (x, y) {
-        s.path(Snap.format(v, {
-          x: x,
-          y: y,
-          x2: x + 99.12
-        }));
+      function makeV(obj) {
+        var center = {
+              x: obj.x + 50,
+              y: obj.y + 50
+            },
+            size = Math.random(),
+            invert = Math.random() < 0.5 ? true : false,
+            path = s.path(Snap.format(v, {
+          x: obj.x,
+          y: obj.y,
+          x2: obj.x + 99.12
+        })).attr({
+          fill: obj.color
+        });
+
+        Snap.animate(0, size, function(val) {
+          if (invert) {
+            path.transform('scale(' + val + ', ' + center.x + ', ' + (obj.y)  + ')');
+          }
+          else {
+            path.transform('scale(' + (0 - val) + ', ' + center.x + ', ' + (obj.y)  + ')');
+          }
+          
+        }, obj.speed, mina.elastic, function() {
+          // Snap.animate(size, 0, function(val) {
+          //   if (invert) {
+          //     path.transform('scale(' + val + ', ' + center.x + ', ' + (obj.y)  + ')');
+          //   }
+          //   else {
+          //     path.transform('scale(' + (0 - val) + ', ' + center.x + ', ' + (obj.y)  + ')');
+          //   }
+            
+          // }, obj.speed, mina.elastic);
+        });
+      }
+
+      function vevoStream(x, y, size, speed) {
+        var max = size,
+            i = 0,
+            colors = ['#ff0031', '#ff3912', '#f90094', '#7a014f', '#03cfeb', '#bababd'],
+            vObj;
+
+            for (; i < size; i += 10) {
+              vObj = {
+                x: x + i,
+                y: y,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                speed: i * 3
+              };
+              makeV(vObj);
+            };
       };
 
       $('svg').on('click', function(e) {
         var x = e.clientX,
             y = e.clientY;
 
-        vevoStream(x, y);
+        vevoStream(x, y, 500, 100);
 
         return false;
       });
