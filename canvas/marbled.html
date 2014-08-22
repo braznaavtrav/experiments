@@ -50,13 +50,13 @@
       var colorRand;
       var xOffset = 0;
       var sizeOffset = 0;
-      var yStep = 3;
+      var yStep = 2;
       var size = 30;
-      var xStep = 70;
+      var xStep = 68;
 
       for (var y = canvas.height - 1; y >= (0 - yStep); y -= yStep) {
         colorRand = Math.ceil(Math.random() * 2);
-        xOffset = Math.sin(y/100) * 30;
+        xOffset = Math.sin(y/100) * Math.cos(y/100) * 30;
         sizeOffset = Math.sin(y/10) * 3;
 
         for (var x = canvas.width - 1; x >= (0 - xStep); x -= xStep) {
