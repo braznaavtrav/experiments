@@ -18,25 +18,40 @@
     <script src="//cdn.jsdelivr.net/snap.svg/0.2.0/snap.svg-min.js"></script>
     <script type="text/javascript">
       var s = Snap('#svg'),
-          v = "M{x},{y}l18.213,78.812c3.71,14.224,14.282,13.314,14.282,13.314c7.241,0,12.66-4.201,17.589-12.155L{x2},{y}z";
+          v = "M{x},{y}l18.213,78.812c3.71,14.224,14.282,13.314,14.282,13.314c7.241,0,12.66-4.201,17.589-12.155L{x2},{y}z",
+          paths = [];
 
       function makeV(obj) {
         var center = {
               x: obj.x + 50,
               y: obj.y + 50
             },
-            size = Math.random(),
+            size = Math.random() * obj.ratio,
             invert = Math.random() < 0.5 ? true : false,
             path = s.path(Snap.format(v, {
-          x: obj.x,
-          y: obj.y,
-          x2: obj.x + 99.12
-        })).attr({
-          fill: obj.color
-        });
+              x: obj.x,
+              y: obj.y,
+              x2: obj.x + 99.12
+            })).attr({
+              fill: obj.color
+            }),
+            image;
+        path.center = center;
+        paths.push(path);
+
+        if (obj.image) {
+          image = s.image(obj.image, obj.x - 100, obj.y, 300, 300);
+          image.attr({
+            mask: path
+          });
+          path.attr({
+            fill: "#fff"
+          })
+          size = size * 2;
+        }
 
         Snap.animate(0, size, function(val) {
-          if (invert) {
+          if (invert || image) {
             path.transform('scale(' + val + ', ' + center.x + ', ' + (obj.y)  + ')');
           }
           else {
@@ -52,35 +67,68 @@
           //     path.transform('scale(' + (0 - val) + ', ' + center.x + ', ' + (obj.y)  + ')');
           //   }
             
-          // }, obj.speed, mina.elastic);
+          // }, 750, mina.backin);
         });
       }
 
-      function vevoStream(x, y, size, speed) {
-        var max = size,
+      function vevoStream(x, y, length, speed, size, interval) {
+        var max = length,
             i = 0,
             colors = ['#ff0031', '#ff3912', '#f90094', '#7a014f', '#03cfeb', '#bababd'],
+            images = ['1.png', '2.png'],
+            setImage = false,
+            imageSet = false,
             vObj;
 
-            for (; i < size; i += 10) {
+            for (; i < length; i += interval) {
               vObj = {
                 x: x + i,
                 y: y,
                 color: colors[Math.floor(Math.random() * colors.length)],
-                speed: i * 3
+                speed: i * 3,
+                ratio: size
               };
+              if (!imageSet) {
+                setImage = Math.random() < 0.1 ? true : false;
+                if (setImage) {
+                  vObj.image = images[Math.floor(Math.random() * colors.length)];
+                  imageSet = true;
+                }
+              }
               makeV(vObj);
             };
       };
-
-      $('svg').on('click', function(e) {
-        var x = e.clientX,
-            y = e.clientY;
-
-        vevoStream(x, y, 500, 100);
-
-        return false;
+      
+      var e = jQuery.Event( "click", {
+        clientX: 200,
+        clientY: 200
       });
+
+      $('svg')
+        .on('mousemove', function(e) {
+          var x = e.clientX,
+              y = e.clientY;
+
+          for (var i = paths.length - 1; i >= 0; i--) {
+            paths[i].matrix.translate(x, y);
+          };
+        })
+        .on('click', function(e) {
+          var x = e.clientX,
+              y = e.clientY;
+
+          s.clear();
+          paths = [];
+          vevoStream(x, y, 900, 100, 2, 30);
+
+          return false;
+        });
+
+        setTimeout(function() {
+          $('svg').trigger(e);
+        }, 100);
+
+
 
     </script>
   </body>

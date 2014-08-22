@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TEST</title>
+    <meta charset=utf-8>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas" width="500" height="500"></canvas>
+    <script type="text/javascript">
+      var canvas = document.getElementById('canvas');
+      var resize = function() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      };
+      window.addEventListener('resize', resize);
+      resize();
+
+      var ctx = canvas.getContext('2d');
+      var canvasData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+      function drawPixel (x, y, r, g, b, a) {
+        var index = (x + y * canvas.width) * 4;
+
+        canvasData.data[index + 0] = r;
+        canvasData.data[index + 1] = g;
+        canvasData.data[index + 2] = b;
+        canvasData.data[index + 3] = a;
+      }
+
+      function drawCircle (x,y,radius,color) {
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
+        ctx.fillStyle = color;
+        ctx.fill();
+      }
+
+      function updateCanvas() {
+        ctx.putImageData(canvasData, 0, 0);
+      }
+
+
+      var colorRand;
+      var xOffset = 0;
+      var sizeOffset = 0;
+      var yStep = 3;
+      var size = 30;
+      var xStep = 70;
+
+      for (var y = canvas.height - 1; y >= (0 - yStep); y -= yStep) {
+        colorRand = Math.ceil(Math.random() * 2);
+        xOffset = Math.sin(y/100) * 30;
+        sizeOffset = Math.sin(y/10) * 3;
+
+        for (var x = canvas.width - 1; x >= (0 - xStep); x -= xStep) {
+          var color = (colorRand == 2) ? 'black' : 'white';
+          drawCircle(x+xOffset,y,size,color);
+
+        }
+
+      }
+
+      // updateCanvas();
+
+      
+
+    </script>
+  </body>
+</html>
