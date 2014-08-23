@@ -37,37 +37,48 @@
 
       function drawCircle (x,y,radius,color) {
         ctx.beginPath();
-        ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
+        ctx.arc(x, y, radius, 0, 3 * Math.PI, false);
         ctx.fillStyle = color;
+        ctx.strokeStyle = 'white';
+        ctx.stroke();
         ctx.fill();
       }
-
-      function updateCanvas() {
-        ctx.putImageData(canvasData, 0, 0);
-      }
+      
+      var n = 0;
 
 
-      var colorRand;
-      var xOffset = 0;
-      var sizeOffset = 0;
-      var yStep = 2;
-      var size = 30;
-      var xStep = 68;
+      function updateCanvas() {  
+        n += 3;
+        var colorRand;
+        var xOffset = 0;
+        var sizeOffset = 0;
+        var yStep = 10;
+        var size = 30;
+        var xStep = 100;
+        var i = 0;
 
-      for (var y = canvas.height - 1; y >= (0 - yStep); y -= yStep) {
-        colorRand = Math.ceil(Math.random() * 2);
-        xOffset = Math.sin(y/100) * Math.cos(y/100) * 30;
-        sizeOffset = Math.sin(y/10) * 3;
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        for (var x = canvas.width - 1; x >= (0 - xStep); x -= xStep) {
-          var color = (colorRand == 2) ? 'black' : 'white';
-          drawCircle(x+xOffset,y,size,color);
+        for (var y = canvas.height - 1; y >= (0 - yStep); y -= yStep) {
+          // colorRand = Math.ceil(Math.random() * 2);
+          // var color = (colorRand == 2) ? 'blue' : 'black';
+          xOffset = Math.sin((y+n)/25) * 12;
+          for (var x = canvas.width - 1; x >= (0 - xStep); x -= xStep) {
+            i++;
+
+            sizeOffset = Math.sin(y/70) * 30;
+            sizeOffset = (i % 2 === 0) ? sizeOffset : 0 - sizeOffset;
+
+            drawCircle(x+xOffset,y,size+sizeOffset,'black');
+
+          }
 
         }
 
       }
-
-      // updateCanvas();
+      
+      setInterval(updateCanvas, 50);
 
       
 

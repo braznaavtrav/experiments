@@ -6,14 +6,21 @@ module.exports = function(grunt) {
         options: {
           port: 3000,
           base: '.',
-          keepalive: true
+          livereload: true
         }
       }
+    },
+    watch: {
+      files: 'canvas/*',
+      options: {
+        livereload: true,
+      },
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-contrib-watch');
 
-  grunt.registerTask('default', ['connect']);
+  grunt.registerTask('default', ['connect', 'watch']);
 
 };
